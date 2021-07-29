@@ -17,13 +17,16 @@ while : ; do
 	fi
 	
 	ddns_ipv6=`nslookup workspace.noip.cn | grep -A 1 "Name:" |grep "Address:"| awk '{print $2}'`
-	
 	if [ "$interface_ipv6" != "$ddns_ipv6"  ] ; then
 		wget "http://www.meibu.com/ipv6zdz.asp?ipv6=$interface_ipv6&name=$dns_name&pwd=$dns_token" -o ddns_v6_push.log -O ddns_v6.result
 		sed -i 's/\r//' ddns_v6.result
 		result=`cat ddns_v6.result`
 		if [ $result == "ok" ] ; then
 			echo "set ddns.. ok "
+			if [ ! -z "${is_once}" ] ; then
+				echo "no change..."
+				exit 0
+			fi
 		else
 			echo "set ddns .. error "
 			sleep 30
