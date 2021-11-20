@@ -1,10 +1,11 @@
 
 #put this in your bash autoload (/etc/bash_complete.d/) or source github_utils.
 
-create_github_repository() {
+github_create_repository() {
 	local username=`git config github.user`
 	local token=`git config github.token`
 	local repository=$1
+  local visibility="public"
 	#echo $username $token $repository
 	if [ -z "$username" ] || [ -z "$token" ] || [ -z "$1" ] ; then
 		echo "miss github username , token or repository name!"
@@ -16,7 +17,13 @@ create_github_repository() {
 	
 	#echo '{"name":"'$repository'" }'
 	#echo '{"name":"$repository"}'
-	curl -u "$username:$token" https://api.github.com/user/repos -d '{"name":"'$repository'" }'  > /dev/null 2>&1
+  if [ "$2" == "private" ] ; then
+    echo "[WARNING] create a private repository."
+	  curl -X POST  -u "$username:$token" https://api.github.com/user/repos -d '{"name":"'$repository'","private":true,"visibility":"'$visibility'"}'  > /dev/null 2>&1
+  else
+	  curl -X POST  -u "$username:$token" https://api.github.com/user/repos -d '{"name":"'$repository'"}'  > /dev/null 2>&1
+  fi
+
 	
 	if [ $? -ne 0 ] ; then
 		echo "create remote repository err!"
@@ -26,7 +33,7 @@ create_github_repository() {
 	#echo push ?
 }
 
-delete_github_repository() {
+github_delete_repository() {
 	local username=`git config github.user`
 	local token=`git config github.token`
 	local repository=$1
@@ -44,7 +51,7 @@ delete_github_repository() {
 	fi
 }
 
-attach_github_repository() {
+github_attach_repository() {
 	local username=`git config github.user`
 	local repository=`basename $(pwd)`
 
@@ -65,7 +72,7 @@ attach_github_repository() {
 }
 
 
-new_repository_local_and_github() {
+github_start_empty_repository() {
 	local username=`git config github.user`
 	local repository=$1
 	if [ -z "$username" ] || [  -z "$1" ] ; then
@@ -77,4 +84,18 @@ new_repository_local_and_github() {
 	create_github_repository $repository
 	git clone git@github.com:$username/$repository.git $repository
 	cd $repository
+}
+
+github_list_my_repository() {
+  local username=`git config github.user`
+	local token=`git config github.token`
+	local repository=$1
+	#echo $username $token $repository
+	if [ -z "$username" ] || [ -z "$token" ] ; then
+		echo "miss github username , token or repository name!"
+		return -1
+	fi
+	
+	curl -X GET  -u "$username:$token" -H "Accept: application/vnd.github.v3+json" https://api.github.com/user/repos  | grep -A 2 "\"full_name\"\:" 
+
 }
