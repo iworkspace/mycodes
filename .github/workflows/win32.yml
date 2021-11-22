@@ -6,24 +6,26 @@ on:
   push :
     paths:
       - 'win_startup/**'
-    branches [ main ]
-  workflow_dispatch:
+    branches: [ main ]
 
-    jobs:
-      build:
-        runs-on: windows-lastest
-        
-        steps:
-          name: Install vc env
-          uses: jurplel/install-qt-action@v2.0.0
-          
-          uses: actions/checkout@v1
-          with:
-            fetch-depth: 1
+jobs:
+  build:
+    runs-on: windows-lastest
+    
+    steps:
+      - uses: actions/checkout@v1
 
-          name: build-msvc
-          shell: cmd
-          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x86
+      - name: Install vc env
+        uses: jurplel/install-qt-action@v2.13.0
+        with:
+          version: 5.9.9
+          arch: win32_msvc2015
+          cached: 'false'
+
+      - name: build-msvc
+        shell: cmd
+        run: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" "x86"
           nmake clean
           nmake 
 
