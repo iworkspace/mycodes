@@ -17,6 +17,9 @@ CFLAGS= /DLUA_BUILD_AS_DLL
 #%.o:%c
 #	echo $@
 
+report_server.o : report_server.c
+	cl /c /DWIN_32 report_server.c /Foreport_server.o
+
 report_server.exe: liblua.a report_server.o 
 	cl /Fereport_server report_server.o  liblua.a 
 
@@ -25,6 +28,8 @@ liblua.a:	$(ALL_O)
 
 clean:
 	del report_server.exe report_server.o liblua.a $(ALL_O)
+##
+#client & test
 
 ###script output here.
 
@@ -92,5 +97,4 @@ lzio.o : lzio.c
 	cl /c lzio.c /Folzio.o
 print.o : print.c
 	cl /c print.c /Foprint.o
-report_server.o : report_server.c
-	cl /c /DWIN_32 report_server.c /Foreport_server.o
+
