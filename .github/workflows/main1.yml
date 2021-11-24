@@ -1,11 +1,9 @@
 # Compile win32 startup.exe
 #
-name: win32
+name: win321
 
 on:  
   push :
-    paths:
-      #    - 'win_startup/**'
     branches: [ main ]
 
 jobs:

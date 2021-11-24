@@ -5,7 +5,7 @@ name: win32
 on:  
   push :
     paths:
-      #    - 'win_startup/**'
+      - 'win_startup/**'
     branches: [ main ]
 
 jobs:
