@@ -249,6 +249,24 @@ void WINAPI simple_service_handler(DWORD request)
 	SetServiceStatus(service_handler_status,&service_status);
 }
 
+void add_query_thread()
+{
+  char buf[1000];
+  struct msg_s *msg = buf;
+  struct sockaddr_in loop_addr;
+  int msg_len,len;
+	SOCKET _socket = socket(AF_INET,SOCK_DGRAM,IPPROTO_UDP);
+  msg_len = sprintf(msg->data,"{'msgtype':'check_vm'}");
+  msg->sn = 0;
+  msg->magic = MAGIC;
+  msg->msglen = htons(msg_len);
+  loop_addr.sin_family = AF_INET;
+  loop_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+  loop_addr.sin_port = htons(atoi(bind_port));
+  sendto(_socket,buf,sizeof(struct msg_s)+msg_len,0,&loop_addr,sizeof(loop_addr));
+	closesocket(_socket);
+}
+
 #ifndef WIN_64
 void win_startup_service()
 {
@@ -273,6 +291,7 @@ void win_startup_service()
 	SetServiceStatus(service_handler_status,&service_status);
 
 	log_out("start main loop....");
+  add_query_thread();
 	main_loop();
 }
 
