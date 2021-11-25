@@ -1,0 +1,45 @@
+# Compile startup.exe
+#
+name: startup
+
+on:  
+  push:
+    paths:
+      - 'win_startup/**'
+      - '.github/workflows/win_startup.yml'
+
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Install vc env
+        uses: jurplel/install-qt-action@v2.13.0
+        with:
+          version: 5.9.9
+          arch: win32_msvc2015
+          cached: 'false'
+
+      - name: build-msvc
+        shell: cmd
+        run: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x86
+          cd win_startup
+          nmake clean
+          nmake 
+          mkdir ..\\output\\release
+          cp report_server.exe ..\\output\\release\\report_server.exe
+
+      - name: package
+        uses: actions/upload-artifact@v2
+        with:
+          name: startup
+          path: output/release
+
+      - name: downloader
+        uses: actions/download-artifact@v2
+        with: 
+          name: startup
