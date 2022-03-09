@@ -66,7 +66,6 @@ github_attach_repository() {
 
 
 	#echo $repository
-	create_github_repository $repository
 	git remote add origin git@github.com:$username/$repository.git
 	git push origin master
 }
@@ -81,7 +80,7 @@ github_start_empty_repository() {
 	fi
 	
 	echo "init local git repository!"
-	create_github_repository $repository
+	github_create_repository $repository
 	git clone git@github.com:$username/$repository.git $repository
 	cd $repository
 }

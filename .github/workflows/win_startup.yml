@@ -16,12 +16,12 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: Install vc env
-        uses: jurplel/install-qt-action@v2.13.0
-        with:
-          version: 5.9.9
-          arch: win32_msvc2015
-          cached: 'false'
+        #      - name: Install vc env
+        #        uses: jurplel/install-qt-action@v2.13.0
+        #        with:
+        #          version: 5.9.9
+        #          arch: win32_msvc2015
+        #          cached: 'false'
 
       - name: build-msvc
         shell: cmd
