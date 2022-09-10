@@ -1,0 +1,11 @@
+[Unit]
+Description=ddns 
+After=network.target auditd.service
+
+[Service]
+ExecStart=/bin/bash -c "/root/services/ddns.sh &"
+KillMode=process
+Type=forking
+
+[Install]
+WantedBy=multi-user.target

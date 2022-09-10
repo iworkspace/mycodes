@@ -1,6 +1,5 @@
 迁移原来的相关维护脚本至utils_shell,以后写的临时代码全放这个仓库，通过git做云转移，实现同步备份
 
-
 目录说明
 .
 +--- .github
@@ -11,7 +10,19 @@
 |   +--- rawsocket                      组播socket，高级packet抓包（采用mmap zero copy 及bpf过滤）           
 +--- utils_shell
 |   +--- dns_v6.sh                       服务demon，增加ipv6 域名
+|   +--- ddns.sh 及ddns.service   虚拟机配置ddns
 |   +--- github_utils                   github 工具，基于 giithub token 
 |   +--- nat.sh                             
 |   +--- win_startup                     windows 服务启动，开机启动自己的服务程序，比登入用户之后再输入较快。 
 +--- 备忘.txt
+
+2022-09-10
+在新装的kali虚拟机里增加了 ddns脚本，发现几个问题
+1） systemctl enable ddns.service，卡住，超时，发现必须等到脚本运行完，forking模式也不行，使用 bash -c "xxx.sh &" 规避超时
+2） 脚本启动时，网络已就绪，接口未获取ipv6地址，是等待通过dbus等获取接口配置完成再执行？最简单的是脚本增加等待直到接口地址
+完成配置，毕竟有可能上游不给ipv6地址，另外发现采用临时ipv6地址，同步至域名服务需要一定时间，nslookup才能访问正常，建议再系统
+协议中关闭对应接口临时ipv6地址 sysctl net.ipv6.conf.eth0.use_tempaddr=0
+3)  配置项采用git config 获取，得用 git config global 设置，不然systemd 无法获取变量
+
+
+
