@@ -5,7 +5,7 @@ name: startup
 on:  
   push:
     paths:
-      - 'win_startup/**'
+      - 'utils_shell/win_startup/**'
       - '.github/workflows/win_startup.yml'
 
 

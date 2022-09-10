@@ -1,0 +1,14 @@
+迁移原来的相关维护脚本至utils_shell,以后写的临时代码全放这个仓库，通过git做云转移，实现同步备份
+
+
+目录说明
+.
++--- .github
+|   +--- workflows
+|   |   +--- win_startup.yml
++--- utils_shell
+|   +--- dns_v6.sh                       服务demon，增加ipv6 域名
+|   +--- github_utils                   github 工具，基于 giithub token 
+|   +--- nat.sh                             
+|   +--- win_startup                     windows 服务启动，开机启动自己的服务程序，比登入用户之后再输入较快。 
++--- 备忘.txt
