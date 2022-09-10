@@ -5,7 +5,9 @@
 .
 +--- .github
 |   +--- workflows
-|   |   +--- win_startup.yml
+|       +--- win_startup.yml
++--- simple_example
+|   +--- ip_stat_webserver           python 实现简单socket 收发及httpserver模块的网页demo，展示流量统计
 +--- utils_shell
 |   +--- dns_v6.sh                       服务demon，增加ipv6 域名
 |   +--- github_utils                   github 工具，基于 giithub token 

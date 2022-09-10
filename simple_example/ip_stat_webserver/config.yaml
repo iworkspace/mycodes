@@ -1,0 +1,8 @@
+HTTP:
+  bind_addr: '0.0.0.0'
+  bind_port: 5455
+
+IPERF:
+  bind_port: 56335
+  bind_addr: '0.0.0.0'
+  poll_ns: 1500000000

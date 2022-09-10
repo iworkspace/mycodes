@@ -1,0 +1,119 @@
+<body style="zoom:0.6">
+	<meta charset="UTF-8">
+	<!-- 1. Add these JavaScript inclusions in the head of your page -->
+	<script type="text/javascript" src="/js/jquery-1.4.2.min.js"></script>
+	<script type="text/javascript" src="/js/highcharts.js"></script>
+	
+	<!-- 1b) Optional: the exporting module -->
+	<script type="text/javascript" src="/js/exporting.js"></script>
+
+	<!-- 2. Add the JavaScript to initialize the chart on document ready -->
+	<script type="text/javascript">
+
+	var pps = 0;
+	var bps = 0;
+	var record_5min = []
+	
+	function show_max_min(){
+		var records = { pps:pps,bps:bps };
+		if(record_5min.length >= 60 ){
+			record_5min.shift()
+		}
+		//record new 
+		record_5min.push(records)
+		//copy new
+		var b = record_5min.concat([])
+		//sort
+		b.sort(function(a,b){ return a.bps-b.bps })
+		//show
+		$("#maxmin").text("5 min iperf stat,min:"+b[0].bps/1000000.0+"M/s"+" "+"max:"+b[b.length-1].bps/1000000.0+"M/s")
+	}
+	
+	//setInterval("show_max_min()",5000);
+	function loadData()
+	{
+		 var res =	$.ajax({type: "POST", url: "/get_stat", async: false}).responseText;
+		 //console.log(res);
+		 var res_s =  res.split(",");
+		 pps = parseFloat(res_s[0]);
+		 bps = parseFloat(res_s[1]);
+		 show_max_min();
+	}
+	
+	setInterval("loadData()",5000);
+	
+
+
+	var iperfChart;
+	$(document).ready(function() {
+		iperfChart = new Highcharts.Chart({
+			chart: {
+				renderTo: 'iperf_bps',
+				defaultSeriesType: 'spline',
+				marginRight: 10,
+				events: {
+					load: function() {
+						// set up the updating of the chart each second
+						var series = this.series[0];
+						setInterval(function() {
+							var x = (new Date()).getTime(), // current time
+								y = bps/1000000.0;//M
+							series.addPoint([x, y], true, true);
+						}, 4000);
+					}
+				}
+			},
+			title: {
+				text: '流量统计'
+			},
+			xAxis: {
+				type: 'datetime',
+				tickPixelInterval: 150
+			},
+			yAxis: {
+				title: {
+					text: '流量统计,单位:mb/s'
+				},
+				plotLines: [{
+					value: 0,
+					width: 1,
+					color: '#808080'
+				}]
+			},
+			tooltip: {
+				formatter: function() {
+						return '<b>'+ this.series.name +'</b><br/>'+
+						Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) +'<br/>'+ 
+						Highcharts.numberFormat(this.y, 2);
+				}
+			},
+			legend: {
+				enabled: true
+			},
+			exporting: {
+				enabled: false
+			},
+			series: [{
+				name: '流量统计',
+				data: (function() {
+					// generate an array of random data
+					var data = [],
+						time = (new Date()).getTime(),
+						i;
+					for (i = -19; i <= 0; i++) {
+						data.push({
+							x: time + i * 1000,
+							y: 0
+						});
+					}
+					return data;
+				})()
+			}]
+		});				
+	});
+	
+</script>
+	<!-- 3. Add the container -->
+	<div id="iperf_bps" style="width: 1024px; height: 800px; margin: 0 auto;float:center"></div>
+	<div style="width: 1024px; height: 800px; margin: 0 auto;float:center"> <p id="maxmin" style="text-align:center; background:rgb(197,221,204)"> </p></div>
+</body>
